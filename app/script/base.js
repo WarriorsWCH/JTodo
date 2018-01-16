@@ -8,7 +8,6 @@
     // 初始化 读取store中的数据
     function init() {
         task_list = store.get('task_list') || [];
-        console.log(task_list);
         // listen_msg_event();
         if (task_list.length)
             render_task_list();
@@ -41,49 +40,87 @@
         // 将新Task推入task_list
         task_list.push(new_task);
         // 更新localStorage
-        refresh_task_list();
-    }
-    /*
-    * 刷新localStorage数据并渲染模板
-    * */
-    function refresh_task_list() {
         store.set('task_list', task_list);
-        // render_task_list();
+        render_task_list();
     }
     /*
     * 渲染所有Task模板
     * */
-    function render_task_list(type) {
+    function render_task_list(type = 'all') {
         var $task_list = $('.todo-list');
         $task_list.html('');
         var complete_items = []; // 已完成
         var unComplete_items = []; // 未完成
-        task_list.forEach(function(item, index){
+        task_list.forEach(function (item, index) {
             if (item.complete)
                 complete_items.push(item);
             else
                 unComplete_items.push(item);
         })
-        for (var j = 0; j < task_list.length; j++) {
-            var $task = render_task_item(task_list[j]);
+        var data = task_list;
+        if(type === 'all'){
+            data = task_list
+        }
+        else if(type === 'completed'){
+            data = complete_items
+        }
+        else if(type === 'unCompleted'){
+            data = unComplete_items
+        }
+        for (var j = 0; j < data.length; j++) {
+            var $task = render_task_item(data[j], j);
             if (!$task) continue;
             $task_list.append($task);
         }
+        listen_checkbox_complete(task_list);
+        listen_task_delete(task_list);
     }
     /*
     *渲染单条Task模板
     * */
-    function render_task_item(data) {
+    function render_task_item(data, index) {
         if (!data) return;
         var list_item_tpl =
-            `<li class="todo">
-            <input type="checkbox" class="toggle ${data.complete ? 'completed' : ''}">
-            <label class="${data.complete ? 'completed' : ''}">${data.content}</label>
-            <span class="fr">
-                <span class="action delete"> 删除</span>
-                <span class="action detail"> 详细</span>
-            </span>
-         </li>`
+            `<li class="todo ${data.complete ? 'completed' : ''}">
+                <input type="checkbox" class="toggle" data-index=${index} ${data.complete ? 'checked' : ''}>
+                <label>${data.content}</label>
+                <span class="fr">
+                    <span class="action delete"> 删除</span>
+                    <span class="action detail"> 详细</span>
+                </span>
+            </li>`;
         return $(list_item_tpl);
+    }
+    // checkbox Task完成切换
+    function listen_checkbox_complete(data) {
+        $('.toggle').click(function () {
+            data[$(this).data('index')].complete = !data[$(this).data('index')].complete;
+            store.set('task_list', task_list);
+            $(this).parent().toggleClass("completed");
+        });
+    }
+    // 删除Task
+    function listen_task_delete(data) {
+        $('.delete').click(function () {
+            data.splice($(this).parent().siblings('.toggle').data('index'), 1)
+            store.set('task_list', task_list);
+            render_task_list();
+        });
+    }
+    listen_nav();
+    // 导航切换
+    function listen_nav() {
+        $('.nav').click(function(e){
+            if($(this).hasClass('all')){
+                render_task_list();
+            }
+            else if($(this).hasClass('completed')){
+                render_task_list('completed');
+            }
+            else if($(this).hasClass('unCompleted')){
+                render_task_list('unCompleted');
+            }
+
+        });
     }
 })();
