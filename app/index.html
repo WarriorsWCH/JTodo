@@ -9,9 +9,9 @@
 	<link rel="stylesheet" href="style/css/normalize.css">
 	<link rel="stylesheet" href="style/base.css">
 	<!--[if lt IE 9]>
-			<script src="script/html5shiv.min.js"></script>
-			<script src="scripts/respond.min.js"></script>
-		<![endif]-->
+		<script src="script/html5shiv.min.js"></script>
+		<script src="scripts/respond.min.js"></script>
+	<![endif]-->
 </head>
 
 <body>
@@ -22,7 +22,8 @@
 	</div>
 	<div class="main">
 		<h3 class="big-title">添加任务：</h3>
-		<input placeholder="e.g. 吃饭睡觉打豆豆；    提示：回车即可添加任务" type="text" class="task-input">
+		<input placeholder="e.g. 吃饭睡觉打豆豆；    提示：回车即可添加任务" 
+			   type="text" class="task-input" autofocus autocomplete="off">
 		<ul class="task-count">
 			<li class="nav active">
 				所有任务
@@ -51,6 +52,7 @@
 	</div>
 
 	<script src="script/jquery.min.js"></script>
+	<script src="script/store.js"></script>
 	<script src="script/base.js"></script>
 </body>
 
