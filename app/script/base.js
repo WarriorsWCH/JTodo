@@ -2,16 +2,21 @@
     'use strict';
 
     var $add_task = $('.task-input')
-        , task_list = [];
+        , $task_list = []
+        , $navs =  $('.nav')
+        , navStatus = 'all'
+        , $no_task = $('.no-task-tip');
 
     init();
     // 初始化 读取store中的数据
     function init() {
-        task_list = store.get('task_list') || [];
+        $task_list = store.get('task_list') || [];
         // listen_msg_event();
-        if (task_list.length)
+        if ($task_list.length)
             render_task_list();
-        // task_remind_check();
+        else
+            $no_task.show();
+
     }
     // 添加任务 input注册事件 keyup
     $add_task.keyup(function (e) {
@@ -38,42 +43,43 @@
     * */
     function add_task(new_task) {
         // 将新Task推入task_list
-        task_list.push(new_task);
+        $task_list.push(new_task);
         // 更新localStorage
-        store.set('task_list', task_list);
+        store.set('task_list', $task_list);
+        $no_task.hide();
         render_task_list();
     }
     /*
     * 渲染所有Task模板
     * */
     function render_task_list(type = 'all') {
-        var $task_list = $('.todo-list');
-        $task_list.html('');
+        var $todo_list = $('.todo-list');
+        $todo_list.html('');
         var complete_items = []; // 已完成
         var unComplete_items = []; // 未完成
-        task_list.forEach(function (item, index) {
+        $task_list.forEach(function (item, index) {
             if (item.complete)
                 complete_items.push(item);
             else
                 unComplete_items.push(item);
         })
-        var data = task_list;
+        var data = $task_list;
         if(type === 'all'){
-            data = task_list
+            data = $task_list;
         }
         else if(type === 'completed'){
-            data = complete_items
+            data = complete_items;
         }
         else if(type === 'unCompleted'){
-            data = unComplete_items
+            data = unComplete_items;
         }
         for (var j = 0; j < data.length; j++) {
             var $task = render_task_item(data[j], j);
             if (!$task) continue;
-            $task_list.append($task);
+            $todo_list.append($task);
         }
-        listen_checkbox_complete(task_list);
-        listen_task_delete(task_list);
+        listen_checkbox_complete($task_list);
+        listen_task_delete($task_list);
     }
     /*
     *渲染单条Task模板
@@ -95,7 +101,7 @@
     function listen_checkbox_complete(data) {
         $('.toggle').click(function () {
             data[$(this).data('index')].complete = !data[$(this).data('index')].complete;
-            store.set('task_list', task_list);
+            store.set('task_list', $task_list);
             $(this).parent().toggleClass("completed");
         });
     }
@@ -103,22 +109,29 @@
     function listen_task_delete(data) {
         $('.delete').click(function () {
             data.splice($(this).parent().siblings('.toggle').data('index'), 1)
-            store.set('task_list', task_list);
-            render_task_list();
+            store.set('task_list', $task_list);
+            render_task_list(navStatus);
         });
     }
     listen_nav();
     // 导航切换
     function listen_nav() {
-        $('.nav').click(function(e){
+        $navs.click(function(){
+            $navs.removeClass('active');
             if($(this).hasClass('all')){
+                navStatus = 'all';
                 render_task_list();
+                $(this).addClass('active');
             }
             else if($(this).hasClass('completed')){
+                navStatus = 'completed';
                 render_task_list('completed');
+                $(this).addClass('active');
             }
             else if($(this).hasClass('unCompleted')){
+                navStatus = 'unCompleted';
                 render_task_list('unCompleted');
+                $(this).addClass('active');
             }
 
         });
