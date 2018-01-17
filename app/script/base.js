@@ -61,9 +61,9 @@
         var unComplete_items = []; // 未完成
         $task_list.forEach(function (item, index) {
             if (item.complete)
-                complete_items[index]=item;
+                complete_items[index] = item;
             else
-                unComplete_items[index]=item;
+                unComplete_items[index] = item;
         })
         var data = $task_list;
         if (navStatus === 'all') {
@@ -116,7 +116,7 @@
             $msg_con.fadeIn();
             // 确认删除
             pop().then(function (f) {
-                if(f){
+                if (f) {
                     data.splice(index, 1);
                     store.set('task_list', $task_list);
                     render_task_list(navStatus);
@@ -143,7 +143,7 @@
     }
     // 弹窗提示
     function pop() {
-        var timer , dfd = $.Deferred() , confirmed;
+        var timer, dfd = $.Deferred(), confirmed;
         $('.confirm').on('click', on_confirmed)
         $('.cancel').on('click', on_cancel);
         $('.close').on('click', on_cancel);
@@ -167,20 +167,24 @@
     }
     // 更新 detail
     function listen_task_detail(data) {
-        $('.detail').click(function(){
-            $task_detail.fadeIn();
+        $('.detail').click(function () {
             var index = $(this).parent().siblings('.toggle').data('index');
+            $task_detail.fadeIn();
+            $('[name=content]').val(data[index].content);
+            $('[name=desc]').val(data[index].desc);
+            $('[name=remind_date]').val(data[index].remind_date);
+            
             pop().then(function (f) {
-                if(f){
+                if (f) {
                     data[index].content = $('[name=content]').val();
                     data[index].desc = $('[name=desc]').val();
                     data[index].remind_date = $('[name=remind_date]').val();
-                    debugger
                     store.set('task_list', $task_list);
                     render_task_list(navStatus);
                 }
             })
         })
     }
+    // 日历
     $('.datetime').datetimepicker();
 })();
