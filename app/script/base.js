@@ -6,7 +6,8 @@
         , $navs = $('.nav')
         , navStatus = 'all'
         , $no_task = $('.no-task-tip')
-        , $msg_con = $('.msg-container');
+        , $msg_con = $('.msg-container')
+        , $task_detail = $('.task-detail');
 
     init();
     // 初始化 读取store中的数据
@@ -44,7 +45,7 @@
     * */
     function add_task(new_task) {
         // 将新Task推入task_list
-        $task_list.push(new_task);
+        $task_list.unshift(new_task);
         // 更新localStorage
         store.set('task_list', $task_list);
         $no_task.hide();
@@ -53,25 +54,25 @@
     /*
     * 渲染所有Task模板
     * */
-    function render_task_list(type = 'all') {
+    function render_task_list() {
         var $todo_list = $('.todo-list');
         $todo_list.html('');
         var complete_items = []; // 已完成
         var unComplete_items = []; // 未完成
         $task_list.forEach(function (item, index) {
             if (item.complete)
-                complete_items.push(item);
+                complete_items[index]=item;
             else
-                unComplete_items.push(item);
+                unComplete_items[index]=item;
         })
         var data = $task_list;
-        if (type === 'all') {
+        if (navStatus === 'all') {
             data = $task_list;
         }
-        else if (type === 'completed') {
+        else if (navStatus === 'completed') {
             data = complete_items;
         }
-        else if (type === 'unCompleted') {
+        else if (navStatus === 'unCompleted') {
             data = unComplete_items;
         }
         for (var j = 0; j < data.length; j++) {
@@ -81,6 +82,7 @@
         }
         listen_checkbox_complete($task_list);
         listen_task_delete($task_list);
+        listen_task_detail($task_list);
     }
     /*
     *渲染单条Task模板
@@ -101,9 +103,10 @@
     // checkbox Task完成切换
     function listen_checkbox_complete(data) {
         $('.toggle').click(function () {
-            data[$(this).data('index')].complete = !data[$(this).data('index')].complete;
+            $task_list[$(this).data('index')].complete = !$task_list[$(this).data('index')].complete;
             store.set('task_list', $task_list);
             $(this).parent().toggleClass("completed");
+            render_task_list();
         });
     }
     // 删除Task
@@ -127,20 +130,15 @@
             $navs.removeClass('active');
             if ($(this).hasClass('all')) {
                 navStatus = 'all';
-                render_task_list();
-                $(this).addClass('active');
             }
-            else if ($(this).hasClass('completed')) {
+            else if ($(this).hasClass('complete')) {
                 navStatus = 'completed';
-                render_task_list('completed');
-                $(this).addClass('active');
             }
             else if ($(this).hasClass('unCompleted')) {
                 navStatus = 'unCompleted';
-                render_task_list('unCompleted');
-                $(this).addClass('active');
             }
-
+            $(this).addClass('active');
+            render_task_list();
         });
     }
     // 弹窗提示
@@ -148,14 +146,13 @@
         var timer , dfd = $.Deferred() , confirmed;
         $('.confirm').on('click', on_confirmed)
         $('.cancel').on('click', on_cancel);
-        $msg_con.on('click', on_cancel);
-
+        $('.close').on('click', on_cancel);
+        $('.update').on('click', on_confirmed)
         function on_cancel() {
             confirmed = false;
         }
 
         function on_confirmed(e) {
-            e.preventDefault();
             e.stopPropagation();
             confirmed = true;
         }
@@ -163,9 +160,27 @@
             if (confirmed !== undefined) {
                 dfd.resolve(confirmed);
                 clearInterval(timer);
-                $msg_con.fadeOut();
+                $('.mask').fadeOut();
             }
         }, 50)
         return dfd.promise();
     }
+    // 更新 detail
+    function listen_task_detail(data) {
+        $('.detail').click(function(){
+            $task_detail.fadeIn();
+            var index = $(this).parent().siblings('.toggle').data('index');
+            pop().then(function (f) {
+                if(f){
+                    data[index].content = $('[name=content]').val();
+                    data[index].desc = $('[name=desc]').val();
+                    data[index].remind_date = $('[name=remind_date]').val();
+                    debugger
+                    store.set('task_list', $task_list);
+                    render_task_list(navStatus);
+                }
+            })
+        })
+    }
+    $('.datetime').datetimepicker();
 })();

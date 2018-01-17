@@ -173,7 +173,7 @@ ul {
 }
 
 /* 提示框 */
-.msg-container{
+.mask{
     position: fixed; 
     background: rgba(0, 0, 0, 0.5); 
     top: 0px; 
@@ -215,4 +215,84 @@ button.primary,
 [type=submit] {
     background: #46b1e4;
     margin-right: 5px;
+}
+
+
+
+/* .task-detail {
+    position: absolute;
+    display: none;
+} */
+.task-detail input,
+.task-detail textarea{
+    border-radius: 3px;
+    padding: 10px;
+    width: 300px;
+}
+
+textarea,
+button,
+input[type=text],
+input[type=date] {
+    border: 0;
+}
+.task-detail textarea,
+.task-detail input[type=text], .task-detail input[type=date] {
+    display: block;
+    background: #ddd;
+    -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, .3);
+    -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, .3);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .3);
+}
+
+textarea {
+    min-height: 100px;
+    resize:none;
+}
+
+.task-detail textarea:hover,
+.task-detail textarea:focus,
+.task-detail input[type=text]:hover,
+.task-detail input[type=date]:hover,
+.task-detail input[type=text]:focus,
+.task-detail input[type=date]:focus {
+    background: #eee;
+    -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, .2);
+    -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, .2);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .2);
+}
+.task-detail{
+    display: none;
+}
+.task-detail .detail-con{
+    position: absolute;
+    background: #fff;
+    overflow: auto;
+    color: #333;
+    width: 320px;
+    height: 320px;
+    padding: 10px;
+    top: 50%; 
+    left: 50%; 
+    margin-left: -150px;
+    margin-top: -160px;
+    border-radius: 3px 0 0 3px;
+    -webkit-box-shadow: 0 1px 2px 1px rgba(0, 0, 0, .1);
+    -moz-box-shadow: 0 1px 2px 1px rgba(0, 0, 0, .1);
+    box-shadow: 0 1px 2px 1px rgba(0, 0, 0, .1);
+}
+
+.task-detail .content {
+    padding: 10px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.task-detail .input-item {
+    margin-bottom: 10px;
+}
+.task-detail .cancel{
+    float: right;
+    margin-bottom: 10px;
+    cursor: pointer;
 }
