@@ -3,15 +3,16 @@
 
     var $add_task = $('.task-input')
         , $task_list = []
-        , $navs =  $('.nav')
+        , $navs = $('.nav')
         , navStatus = 'all'
-        , $no_task = $('.no-task-tip');
+        , $no_task = $('.no-task-tip')
+        , $msg_con = $('.msg-container');
 
     init();
     // 初始化 读取store中的数据
     function init() {
+        listen_nav_event();
         $task_list = store.get('task_list') || [];
-        // listen_msg_event();
         if ($task_list.length)
             render_task_list();
         else
@@ -64,13 +65,13 @@
                 unComplete_items.push(item);
         })
         var data = $task_list;
-        if(type === 'all'){
+        if (type === 'all') {
             data = $task_list;
         }
-        else if(type === 'completed'){
+        else if (type === 'completed') {
             data = complete_items;
         }
-        else if(type === 'unCompleted'){
+        else if (type === 'unCompleted') {
             data = unComplete_items;
         }
         for (var j = 0; j < data.length; j++) {
@@ -108,32 +109,63 @@
     // 删除Task
     function listen_task_delete(data) {
         $('.delete').click(function () {
-            data.splice($(this).parent().siblings('.toggle').data('index'), 1)
-            store.set('task_list', $task_list);
-            render_task_list(navStatus);
+            var index = $(this).parent().siblings('.toggle').data('index');
+            $msg_con.fadeIn();
+            // 确认删除
+            pop().then(function (f) {
+                if(f){
+                    data.splice(index, 1);
+                    store.set('task_list', $task_list);
+                    render_task_list(navStatus);
+                }
+            })
         });
     }
-    listen_nav();
     // 导航切换
-    function listen_nav() {
-        $navs.click(function(){
+    function listen_nav_event() {
+        $navs.click(function () {
             $navs.removeClass('active');
-            if($(this).hasClass('all')){
+            if ($(this).hasClass('all')) {
                 navStatus = 'all';
                 render_task_list();
                 $(this).addClass('active');
             }
-            else if($(this).hasClass('completed')){
+            else if ($(this).hasClass('completed')) {
                 navStatus = 'completed';
                 render_task_list('completed');
                 $(this).addClass('active');
             }
-            else if($(this).hasClass('unCompleted')){
+            else if ($(this).hasClass('unCompleted')) {
                 navStatus = 'unCompleted';
                 render_task_list('unCompleted');
                 $(this).addClass('active');
             }
 
         });
+    }
+    // 弹窗提示
+    function pop() {
+        var timer , dfd = $.Deferred() , confirmed;
+        $('.confirm').on('click', on_confirmed)
+        $('.cancel').on('click', on_cancel);
+        $msg_con.on('click', on_cancel);
+
+        function on_cancel() {
+            confirmed = false;
+        }
+
+        function on_confirmed(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            confirmed = true;
+        }
+        timer = setInterval(function () {
+            if (confirmed !== undefined) {
+                dfd.resolve(confirmed);
+                clearInterval(timer);
+                $msg_con.fadeOut();
+            }
+        }, 50)
+        return dfd.promise();
     }
 })();

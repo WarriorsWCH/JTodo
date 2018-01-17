@@ -58,16 +58,17 @@ ul {
 }
 /* 主体 */
 .main {
-	width: 50%;
+    width: 50%;
+    min-width: 520px;;
 	margin: 70px auto;
-	box-sizing:border-box;
+	box-sizing: border-box;
 }
 .main .big-title {
 	color: #222;
 }
 .main .task-input {
     width: 99%;
-    height:30px;
+    height: 30px;
     outline: 0;
     border: 1px solid #ccc;
 }
@@ -169,4 +170,49 @@ ul {
 }
 .main .tasks .todo-list .fr span:hover{
     color: #000;
+}
+
+/* 提示框 */
+.msg-container{
+    position: fixed; 
+    background: rgba(0, 0, 0, 0.5); 
+    top: 0px; 
+    bottom: 0px; 
+    left: 0px; 
+    right: 0px;
+    display: none;
+}
+.msg-content{
+    color: rgb(68, 68, 68); 
+    width: 280px; 
+    height: 80px; 
+    padding: 15px 10px; 
+    background: rgb(255, 255, 255); 
+    position: absolute; 
+    border-radius: 3px; 
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 1px 2px;
+    top: 50%; 
+    left: 50%; 
+    margin-left: -150px;
+    margin-top: -50px;
+}
+.pop-title{
+    padding: 5px 10px; font-weight: 900; font-size: 20px; text-align: center;
+}
+.pop-content{
+    padding: 5px 10px; 
+    text-align: center;
+}
+button {
+    display: inline-block;
+    cursor: pointer;
+    color: #333;
+    border-radius: 3px;
+    padding: 10px;
+}
+
+button.primary,
+[type=submit] {
+    background: #46b1e4;
+    margin-right: 5px;
 }
