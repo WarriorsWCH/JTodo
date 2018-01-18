@@ -165,20 +165,23 @@
         }, 50)
         return dfd.promise();
     }
+    var $content = $('[name=content]')
+        ,$desc = $('[name=desc]')
+        ,$remind_date = $('[name=remind_date]');
     // 更新 detail
     function listen_task_detail(data) {
         $('.detail').click(function () {
             var index = $(this).parent().siblings('.toggle').data('index');
             $task_detail.fadeIn();
-            $('[name=content]').val(data[index].content);
-            $('[name=desc]').val(data[index].desc);
-            $('[name=remind_date]').val(data[index].remind_date);
+            $content.val(data[index].content);
+            $desc.val(data[index].desc);
+            $remind_date.val(data[index].remind_date);
             
             pop().then(function (f) {
                 if (f) {
-                    data[index].content = $('[name=content]').val();
-                    data[index].desc = $('[name=desc]').val();
-                    data[index].remind_date = $('[name=remind_date]').val();
+                    data[index].content = $content.val();
+                    data[index].desc = $desc.val();
+                    data[index].remind_date = $remind_date.val();
                     store.set('task_list', $task_list);
                     render_task_list(navStatus);
                 }
